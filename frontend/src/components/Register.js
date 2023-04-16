@@ -15,30 +15,28 @@ function Register()
         var bp = require('./Path.js');
         var storage = require('../tokenStorage.js');
 
-
         const newUser = { /* Gathers User input to Register */
-        firstName: document.getElementById("registerNameFirst").value,  
-        lastName: document.getElementById("registerNameLast").value,
+        name: document.getElementById("registerNameFirst").value,
+        userId: document.getElementById("userId").value,
         email: document.getElementById("registerEmail").value,
-        login: document.getElementById("registerUsername").value,
         password: document.getElementById("registerPassword").value,
         }
 
         let isEmptyField = false;
-        if(newUser.firstName == ''){
-            document.getElementById('registerNameFirst').placeholder = "Please enter a first name!";
+        if(newUser.name == ''){
+            document.getElementById('registerNameFirst').placeholder = "Please enter a name!";
             document.getElementById('registerNameFirst').style.borderColor = "red";
             isEmptyField = true;
         }else {
             document.getElementById('registerNameFirst').style.borderColor = "green";
         }
 
-        if(newUser.lastName == ''){
-            document.getElementById("registerNameLast").placeholder='Please enter a last name!';
-            document.getElementById('registerNameLast').style.borderColor = "red";
+        if(newUser.userId == ''){
+            document.getElementById("userId").placeholder='Please enter a userID!';
+            document.getElementById('userId').style.borderColor = "red";
             isEmptyField = true;
         }else {
-            document.getElementById('registerNameLast').style.borderColor = "green";
+            document.getElementById('userId').style.borderColor = "green";
         }
         
         if(newUser.email == ''){
@@ -47,14 +45,6 @@ function Register()
             isEmptyField = true;
         }else {
             document.getElementById('registerEmail').style.borderColor = "green";
-        }
-
-        if(newUser.login == ''){
-            document.getElementById("registerUsername").placeholder='Please enter a username!';
-            document.getElementById('registerUsername').style.borderColor = "red";
-            isEmptyField = true;
-        }else {
-            document.getElementById('registerUsername').style.borderColor = "green";
         }
 
         if(newUser.password == ''){
@@ -88,7 +78,7 @@ function Register()
             var res = response.data;
             console.log("Response is: " , response);
 
-            if (res.error != 'success')
+            if (response.status != 200)
             {
                 //setMessage('Failed to register. Please try again.');
                 console.log("Failed to register.")
@@ -96,14 +86,6 @@ function Register()
             else
             {
                 storage.storeToken(res);
-                /*var jwt = require('jsonwebtoken');
-                var ud = jwt.decode(storage.retrieveToken(),{complete:true});
-                var userId = ud.payload.userId;
-                var firstName = ud.payload.firstName;
-                var lastName = ud.payload.lastName;
-                var user = {firstName:firstName,lastName:lastName,id:userId}
-                localStorage.setItem('user_data', JSON.stringify(user));
-                */
                 console.log("User successfully registered.");
                 window.location.href = '/login';
             }
@@ -132,23 +114,18 @@ function Register()
                 <span class="text" id="signUpResult"></span>
                 <div id="register" class="input-group register-input" action="">
                     <div class='input-item'>
-                        <label for="First Name"><strong>First Name</strong></label>
-                        <input type="text" name="nameFirst" id="registerNameFirst" placeholder="First Name"/>
+                        <label for="Name"><strong>Name</strong></label>
+                        <input type="text" name="nameFirst" id="registerNameFirst" placeholder="Name"/>
                     </div>
                     
                     <div class='input-item'>
-                        <label for="Last Name"><strong>Last Name</strong></label>
-                        <input type="text" name="nameLast" id="registerNameLast" placeholder="Last Name"/>
+                        <label for="User Id"><strong>User ID</strong></label>
+                        <input type="text" name="nameLast" id="userId" placeholder="User ID"/>
                     </div>
                     
                     <div class='input-item'>
                         <label for="Email"><strong>Email</strong></label>
                         <input type="text" name="email" id="registerEmail" placeholder="johndoe@gmail.com"/>
-                    </div>
-                    
-                    <div class='input-item'>
-                        <label for="Username"><strong>Username</strong></label>
-                        <input type="text" name="username" id="registerUsername" placeholder="Username"/>
                     </div>
 
                     <div class='input-item'>

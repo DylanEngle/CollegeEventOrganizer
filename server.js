@@ -1,20 +1,17 @@
 const express = require('express');
+const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');           
 const PORT = process.env.PORT || 5000;
 const app = express();
+const db = require('./database/index');
 app.set('port', (process.env.PORT || 5000));
 
 require('dotenv').config();
-const url = process.env.MONGODB_URI;
-const mongoose = require("mongoose");
-mongoose.connect(url)
-.then(() => console.log("Mongo DB connected"))
-.catch(err => console.log(err));
 app.use(bodyParser.json());
 var api = require('./api.js');
-api.setApp( app, mongoose );
+api.setApp( app, mysql );
 
 app.use(cors());
 

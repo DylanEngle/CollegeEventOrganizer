@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useJwt } from "react-jwt";
+import { useJwt } from 'react-jwt';
 import axios from 'axios'
 import Logo from '../images/logoNoBackground.png'
 import '../css/login.css'
@@ -20,17 +20,17 @@ function Login()
         console.log("In DO login");
 
         const user = { /* Gathers User input to Register */
-        login: document.getElementById("loginName").value,  
+        email: document.getElementById("emailName").value,  
         password: document.getElementById("loginPassword").value,
         }
 
         let isEmptyField = false;
-        if(user.login == ''){
-            document.getElementById('loginName').placeholder = "Please enter a username!";
-            document.getElementById('loginName').style.borderColor = "red";
+        if(user.email == ''){
+            document.getElementById('emailName').placeholder = "Please enter a username!";
+            document.getElementById('emailName').style.borderColor = "red";
             isEmptyField = true;
         }else {
-            document.getElementById('loginName').style.borderColor = "green";
+            document.getElementById('emailName').style.borderColor = "green";
         }
 
         if(user.password == ''){
@@ -46,8 +46,7 @@ function Login()
 
 
         event.preventDefault();
-        var obj = {login:loginName.value,password:loginPassword.value};
-        var js = JSON.stringify(obj);
+        var js = JSON.stringify(user);
         console.log("This is JSON: " + js);
         var config =
         {
@@ -65,12 +64,8 @@ function Login()
             var res = response.data;
             console.log("Response is: " , response);
     
-            if (res.status == 500)
+            if (response.status != 200)
             {
-                setMessage('User/Password combination incorrect');
-            }
-            else if(res.id == -1){
-                console.log("Here");
                 setMessage('User/Password combination incorrect');
             }
             else
@@ -105,7 +100,7 @@ function Login()
         <div class='form-main-login'>
             <div id="logo-Words">
                 <img src={Logo} alt="Paradise Logo" id="paradiseLogo" />
-                <h1 id="paradiseText">Paradise Kitchen</h1>
+                <h1 id="paradiseText">Paradise Events</h1>
             </div>
             <div id="form-container" class="form-container">
                 <div class="button-box">
@@ -116,8 +111,8 @@ function Login()
                 <span class="text" id="loginResult">{message}</span>
                 <div id="login" class="input-group login-input" action="">
                     <div class='input-item'>
-                        <label for="Username"><strong>Username</strong></label>
-                        <input type="text" name="username" id="loginName" placeholder="Username" ref={(c) => loginName = c} />
+                        <label for="Username"><strong>Email</strong></label>
+                        <input type="text" name="username" id="emailName" placeholder="Email" ref={(c) => loginName = c} />
                     </div>
                     
                     <div class='input-item'>
