@@ -71,21 +71,10 @@ function Login()
             else
             {
                 console.log("Worked");
-                storage.storeToken(res);
-                var jwt = require('jsonwebtoken');
-                var ud = jwt.decode(storage.retrieveToken(),{complete:true});
-                var user = {};
-                if(ud){
-                    var userId = ud.payload.userId;
-                    var firstName = ud.payload.firstName;
-                    var lastName = ud.payload.lastName;
-                    user = {firstName:firstName,lastName:lastName,id:userId}
-                }else{
-                    user = {firstName:res.firstName,lastName:res.lastName,id:res.id}
-                }
                 
-                localStorage.setItem('user_data', JSON.stringify(user));
-                window.location.href = '/cards';
+                console.log("res is: "+res);
+                localStorage.setItem('user_data', JSON.stringify(res));
+                window.location.href = '/landing';
             }
         }).catch(function (error)
         {

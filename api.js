@@ -6,33 +6,6 @@ const { response } = require('express');
 
 exports.setApp = function ( app, client )
 {
-  app.post("/api/userevents", async(req,res,next) => {
-
-    console.log("in userevents...");
-
-    var userid = req.body.userid;
-    var email = req.body.email;
-    var emaildomain = email.substring(email.indexOf("@"));
-
-    console.log("user id = " + userid + ", email = " + email + ", emaildomain = " + emaildomain);
-
-    var sql = "Select * from events where event_type = 'Public' or " + 
-      " (event_type = 'Private' and events.contact_email like '%" + emaildomain + "') or " + 
-      " (events.RSO_ID in " + 
-      "  (select rso_id from rso_members rm where rm.rso_user_id = '" + userid + "'))"; 
-
-    console.log ("sql = " + sql);
-    
-    db.query(sql, (error, response) => {
-        if (error) return error;
-        if (response.length > 0) {
-            res.json(response);
-            res.status(200);
-            console.log("after query of user events, response length = " + response.length);
-        }
-      })
-
-});
 
   app.post("/api/login",async(req,res,next) => {
 
@@ -56,10 +29,11 @@ exports.setApp = function ( app, client )
     db.query(sql, (error, response) => {
       if (error) return error;
       if (response.length > 0) {
-          res.json(response);
+          res.json(response[0]);
           res.status(200);
           console.log("after query of event_users, response length = " + response.length);
-          console.log("after successful query status is: "+res.status.value);
+          console.log("the res name after query is: "+response[0].name);
+          console.log("after successful query status is: "+response.status);
       }
     })
 });
@@ -138,8 +112,24 @@ app.post("/api/eventusers",async(req,res,next) => {
 
       return res.status(400).json(errors);
   }*/
+
+  var email = req.body.email;
+  var emaildomain = email.substring(email.indexOf("@"));
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
+    res.setHeader(
+      'Access-Control-Allow-Methods',
+      'GET, POST, PATCH, DELETE, OPTIONS'
+    );
+
+  var sql = "Select * from event_users where email like '%" + emaildomain + "' "; 
+   
   
-  db.query('SELECT * FROM EventUsers', (error, response) => {
+  db.query(sql, (error, response) => {
       if (error) return error;
       if (response.length > 0) {
           res.json(response);
@@ -158,6 +148,17 @@ app.post("/api/rso",async(req,res,next) => {
   const description = req.body.description;
   const emaildomain = req.body.emaildomain;
   const users = req.body.users;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PATCH, DELETE, OPTIONS'
+  );
+
   const baseMembersSql = "Insert into rso_members(rso_user_id, rso_id, isAdmin) values ('" ;
 
   var rsoSql = "Insert into rso (RSO_name, RSO_description,RSO_emailDomain) " + 
@@ -192,6 +193,70 @@ app.post("/api/rso",async(req,res,next) => {
           res.json(response);
           res.status(200);
         
+    })
+
+});
+
+app.post("/api/displayrso",async(req,res,next) => {
+
+  console.log("in users, process.env.db_host = "+process.env.db_host);
+
+  var email = req.body.email;
+  var emaildomain = email.substring(email.indexOf("@"));
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
+    res.setHeader(
+      'Access-Control-Allow-Methods',
+      'GET, POST, PATCH, DELETE, OPTIONS'
+    );
+
+  var sql = "Select * from rso where RSO_emailDomain like '%" + emaildomain + "' "; 
+   
+  
+  db.query(sql, (error, response) => {
+      if (error) return error;
+      if (response.length > 0) {
+          res.json(response);
+          res.status(200);
+          console.log("after query of RSOs, response length = " + response.length);
+      }
+    })
+
+});
+
+app.post("/api/joinrso",async(req,res,next) => {
+
+  console.log("in join rso ... ");
+
+  const user_id = req.body.user_id;
+  const rso_id = req.body.rso_id;
+  const isAdmin = 0;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PATCH, DELETE, OPTIONS'
+  );
+
+  const baseMembersSql = "Insert into rso_members(rso_user_id, rso_id, isAdmin) values ('"+user_id+"','"+rso_id+"','"+isAdmin +"')" ;
+
+
+  db.query(baseMembersSql, (error, response) => {
+      if (error){
+        console.log(error);
+        return error;
+      }
+      console.log("query succeeded, id = "+ response.insertId);
+      res.json(response);
+      res.status(200);
     })
 
 });
@@ -234,5 +299,41 @@ app.post("/api/event",async(req,res,next) => {
       res.json(response);
       res.status(200);
   });
+});
+
+app.post("/api/selectrso",async(req,res,next) => {
+
+  console.log("in users, process.env.db_host = "+process.env.db_host);
+
+  var user_id = req.body.user_id;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
+    res.setHeader(
+      'Access-Control-Allow-Methods',
+      'GET, POST, PATCH, DELETE, OPTIONS'
+    );
+
+  var sql = "SELECT * FROM rso INNER JOIN rso_members ON rso_members.rso_id = rso.RSO_ID"
+  + " WHERE rso_members.rso_user_id = '"+user_id+"'"
+  +" AND rso_members.isAdmin = 1";
+  
+   
+  
+  db.query(sql, (error, response) => {
+      if (error) {
+        console.log(error);
+        return error;
+      }
+      if (response.length > 0) {
+          res.json(response);
+          res.status(200);
+          console.log("after query of RSOs, response length = " + response.length);
+      }
+    })
+
 });
 }
