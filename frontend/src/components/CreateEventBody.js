@@ -20,64 +20,149 @@ function CreateEvent()
 
         const newUser = { /* Gathers User input to Register */
         rsoId:rso_id,
-        eventTitle: document.getElementById("eventTitle").value,
+        title: document.getElementById("eventTitle").value,
         subTitle: document.getElementById("eventSubtitle").value,
         description: document.getElementById("eventDescription").value,
-        location_name: document.getElementById("eventLocationName").value,
-        location_lat: document.getElementById("eventLocationLat").value,
-        location_long: document.getElementById("eventLocationLong").value,
-        //eventDate: 
-       // eventTime:
-        eventType: document.getElementById("eventType").value,
+        locationName: document.getElementById("eventLocationName").value,
+        locationLat: document.getElementById("eventLocationLat").value,
+        locationLong: document.getElementById("eventLocationLong").value,
+        date: document.getElementById("eventDate").value,
+        time: document.getElementById("eventTime").value,
+        type: document.getElementById("eventType").value,
         category: document.getElementById("eventCategory").value,
-        contact_name: document.getElementById("eventContactName").value,
-        contact_phone: document.getElementById("eventContactPhone").value,
-        contact_email: document.getElementById("eventContactEmail").value
+        contactName: document.getElementById("eventContactName").value,
+        contactPhone: document.getElementById("eventContactPhone").value,
+        contactEmail: document.getElementById("eventContactEmail").value
         };
 
         let isEmptyField = false;
-        if(newUser.name == ''){
-            document.getElementById('registerNameFirst').placeholder = "Please enter a name!";
-            document.getElementById('registerNameFirst').style.borderColor = "red";
+        if(newUser.eventTitle == ''){
+            document.getElementById('eventTitle').placeholder = "Please enter a name!";
+            document.getElementById('eventTitle').style.borderColor = "red";
             isEmptyField = true;
         }else {
-            document.getElementById('registerNameFirst').style.borderColor = "green";
+            document.getElementById('eventTitle').style.borderColor = "green";
         }
 
-        if(newUser.userId == ''){
-            document.getElementById("userId").placeholder='Please enter a userID!';
-            document.getElementById('userId').style.borderColor = "red";
+        if(newUser.subTitle == ''){
+            document.getElementById("eventSubtitle").placeholder='Please enter a subtitle!';
+            document.getElementById('eventSubtitle').style.borderColor = "red";
             isEmptyField = true;
         }else {
-            document.getElementById('userId').style.borderColor = "green";
+            document.getElementById('eventSubtitle').style.borderColor = "green";
         }
         
-        if(newUser.email == ''){
-            document.getElementById("registerEmail").placeholder='Please enter an email!';
-            document.getElementById('registerEmail').style.borderColor = "red";
+        if(newUser.description == ''){
+            document.getElementById("eventDescription").placeholder='Please enter an description!';
+            document.getElementById('eventDescription').style.borderColor = "red";
             isEmptyField = true;
         }else {
-            document.getElementById('registerEmail').style.borderColor = "green";
+            document.getElementById('eventDescription').style.borderColor = "green";
         }
 
         if(newUser.password == ''){
-            document.getElementById("registerPassword").placeholder='Please enter a password!';
-            document.getElementById('registerPassword').style.borderColor = "red";
+            document.getElementById("eventLocationName").placeholder='Please enter a location name!';
+            document.getElementById('eventLocationName').style.borderColor = "red";
             isEmptyField = true;
         }else {
-            document.getElementById('registerPassword').style.borderColor = "green";
+            document.getElementById('eventLocationName').style.borderColor = "green";
+        }
+
+        if(newUser.location_name == ''){
+            document.getElementById("eventLocationName").placeholder='Please enter a location name!';
+            document.getElementById('eventLocationName').style.borderColor = "red";
+            isEmptyField = true;
+        }else {
+            document.getElementById('eventLocationName').style.borderColor = "green";
+        }
+
+        if(newUser.location_lat == ''){
+            document.getElementById("eventLocationLat").placeholder='Please enter a location latitude!';
+            document.getElementById('eventLocationLat').style.borderColor = "red";
+            isEmptyField = true;
+        }else {
+            document.getElementById('eventLocationLat').style.borderColor = "green";
+        }
+
+        if(newUser.location_long == ''){
+            document.getElementById("eventLocationLong").placeholder='Please enter a location longitude!';
+            document.getElementById('eventLocationLong').style.borderColor = "red";
+            isEmptyField = true;
+        }else {
+            document.getElementById('eventLocationLong').style.borderColor = "green";
+        }
+
+        if(newUser.eventDate == ''){
+            document.getElementById("eventDate").placeholder='Please enter a date!';
+            document.getElementById('eventDate').style.borderColor = "red";
+            isEmptyField = true;
+        }else {
+            document.getElementById('eventDate').style.borderColor = "green";
+        }
+
+        if(newUser.eventTime == ''){
+            document.getElementById("eventTime").placeholder='Please enter an event time!';
+            document.getElementById('eventTime').style.borderColor = "red";
+            isEmptyField = true;
+        }else {
+            document.getElementById('eventTime').style.borderColor = "green";
+        }
+
+        if(newUser.eventType == ''){
+            document.getElementById("eventType").placeholder='Please enter an event type!';
+            document.getElementById('eventType').style.borderColor = "red";
+            isEmptyField = true;
+        }else {
+            document.getElementById('eventType').style.borderColor = "green";
+        }
+
+        if(newUser.category == ''){
+            document.getElementById("eventCategory").placeholder='Please enter an event category!';
+            document.getElementById('eventCategory').style.borderColor = "red";
+            isEmptyField = true;
+        }else {
+            document.getElementById('eventCategory').style.borderColor = "green";
+        }
+
+        if(newUser.contact_name == ''){
+            document.getElementById("eventContactName").placeholder='Please enter a contact name!';
+            document.getElementById('eventContactName').style.borderColor = "red";
+            isEmptyField = true;
+        }else {
+            document.getElementById('eventContactName').style.borderColor = "green";
+        }
+
+        if(newUser.contact_phone == ''){
+            document.getElementById("eventContactPhone").placeholder='Please enter a contact phone!';
+            document.getElementById('eventContactPhone').style.borderColor = "red";
+            isEmptyField = true;
+        }else {
+            document.getElementById('eventContactPhone').style.borderColor = "green";
+        }
+
+        if(newUser.contact_email == ''){
+            document.getElementById("eventContactEmail").placeholder='Please enter a contact email!';
+            document.getElementById('eventContactEmail').style.borderColor = "red";
+            isEmptyField = true;
+        }else {
+            document.getElementById('eventContactEmail').style.borderColor = "green";
+        }
+
+        if(newUser.rsoId == null){
+            isEmptyField = true;
         }
 
         if(isEmptyField){
             return;
         }
+
         let js = JSON.stringify(newUser);
         console.log("This is JSON: " + js);
 
         let config =
         {
             method: 'post',
-            url: bp.buildPath('api/register'),
+            url: bp.buildPath('api/event'),
             headers:
             {
             'Content-Type': 'application/json'
@@ -94,13 +179,13 @@ function CreateEvent()
             if (response.status != 200)
             {
                 //setMessage('Failed to register. Please try again.');
-                console.log("Failed to register.")
+                console.log("Failed to create event.")
             }
             else
             {
                 storage.storeToken(res);
-                console.log("User successfully registered.");
-                window.location.href = '/login';
+                console.log("Event successfully created.");
+                window.location.href = '/landing';
             }
         })
 
@@ -135,7 +220,7 @@ function CreateEvent()
 
                     <div class='input-item'>
                         <label for="Password"><strong>Type</strong></label>
-                        <input type="password" name="password" id="eventType"  placeholder="Public, Private, RSO"/>
+                        <input type="text" name="password" id="eventType"  placeholder="Public, Private, RSO"/>
                     </div>
 
                     <div class='input-item'>
@@ -171,6 +256,16 @@ function CreateEvent()
                     <div class='input-item'>
                         <label for="Name"><strong>Location Longitude</strong></label>
                         <input type="text" name="nameFirst" id="eventLocationLong" placeholder="Location Longitude"/>
+                    </div>
+
+                    <div class='input-item'>
+                        <label for="Name"><strong>Event Date</strong></label>
+                        <input type="text" name="nameFirst" id="eventDate" placeholder="YYYY-MM-DD"/>
+                    </div>
+
+                    <div class='input-item'>
+                        <label for="Name"><strong>Event Time</strong></label>
+                        <input type="text" name="nameFirst" id="eventTime" placeholder="MM:SS:MS"/>
                     </div>
                 </div>
                 <div id="registerButtonBox">

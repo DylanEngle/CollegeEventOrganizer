@@ -5,19 +5,19 @@ import { useJwt } from "react-jwt";
 import axios from 'axios'
 import '../css/login.css'
 
-function loadRSO()
+function loadSelectRSO()
 {
-    console.log("made it in LoadRSO");
+    console.log("made it in SelectRSOdeleted");
 
     var bp = require('./Path.js');
     var storage = require('../tokenStorage.js');
 
     var _ud = localStorage.getItem('user_data');
     var ud = JSON.parse(_ud);
-    var email = ud.email;
+    var user_id = ud.user_id;
 
         const newUser = { /* Gathers User input to Register */
-        email:email
+        user_id:user_id
         }
 
         let js = JSON.stringify(newUser);
@@ -26,7 +26,7 @@ function loadRSO()
         let config =
         {
             method: 'post',
-            url: bp.buildPath('api/displayrso'),
+            url: bp.buildPath('api/selectrsodeletion'),
             headers:
             {
             'Content-Type': 'application/json'
@@ -44,12 +44,12 @@ function loadRSO()
             if (response.status != 200)
             {
                 //setMessage('Failed to register. Please try again.');
-                console.log("Failed to load RSOs.")
+                console.log("Failed to load select RSOs.")
             }
             else
             {
-                console.log("RSOs successfully loaded.");
-                localStorage.setItem('rsos', JSON.stringify(res));
+                console.log("Select RSOs successfully loaded.");
+                localStorage.setItem('selectrsos', JSON.stringify(res));
                 console.log(res);
             }
         })
@@ -63,20 +63,18 @@ function loadRSO()
 
 
 
-function JoinRSO()
+function SelectRSO()
 {
     const [checkedList, setCheckedList] = useState([]);
     const [displayCheckedList, setDisplayCheckedList] = useState([]);
     
      useEffect(() => {
-      loadRSO();
+      loadSelectRSO();
      }, []) 
   
-     var _ud = localStorage.getItem('rsos');
-     console.log("HELLO"+_ud);
+     var _ud = localStorage.getItem('selectrsos');
      var ud = JSON.parse(_ud);
      let RSOS = ud;
-     console.log("rsos is: "+RSOS);
      let listData = [];
      
      
@@ -117,70 +115,73 @@ function JoinRSO()
       }
     }
   
-    const doJoinRSO = async event =>{
+    const doLeaveRSO = async event =>{
       event.preventDefault();
-      console.log("made it in doJoinRSO");
+      console.log("made it in doLeaveRSO");
   
       var bp = require('./Path.js');
       var storage = require('../tokenStorage.js');
-  
-      var _ud = localStorage.getItem('user_data');
-      var ud = JSON.parse(_ud);
-      var user_id = ud.user_id;
     
       if(checkedList.length > 1){
         return;
       }
 
+      
+
       let rso_id = checkedList[0].substring(0,checkedList[0].indexOf(":"));
-  
+      
+      var _ud = localStorage.getItem('user_data');
+      var ud = JSON.parse(_ud);
+      var user_id = ud.user_id;
+
       const newUser = { /* Gathers User input to Register */
-      user_id: user_id,
-      rso_id: rso_id
-      };
-  
-      let js = JSON.stringify(newUser);
-      console.log("This is JSON: " + js);
-  
-      let config =
-      {
-          method: 'post',
-          url: bp.buildPath('api/joinrso'),
-          headers:
-          {
-          'Content-Type': 'application/json'
-          },
-          data: js
-      };
-      console.log(config);
-      axios(config)
-      .then(function (response)
-      {
-          var res = response.data;
-          console.log("Response is: " , response);
-  
-          if (response.status != 200)
-          {
-              //setMessage('Failed to register. Please try again.');
-              console.log("Failed to join RSO.")
-          }
-          else
-          {
-              console.log("Successfully joined RSO.");
-              window.location.href = '/landing';
-          }
-      })
-  
-      .catch(function (error)
-      {
-          console.log(error);
-      });
+        rso_id: rso_id,
+        user_id: user_id
+        };
+
+        let js = JSON.stringify(newUser);
+        console.log("This is JSON: " + js);
+
+        let config =
+        {
+            method: 'post',
+            url: bp.buildPath('api/leaverso'),
+            headers:
+            {
+            'Content-Type': 'application/json'
+            },
+            data: js
+        };
+        console.log(config);
+        axios(config)
+        .then(function (response)
+        {
+            var res = response.data;
+            console.log("Response is: " , response);
+
+            if (response.status != 200)
+            {
+                //setMessage('Failed to register. Please try again.');
+                console.log("Failed to leave rso.")
+            }
+            else
+            {
+                storage.storeToken(res);
+                console.log("User successfully left rso.");
+                window.location.href = '/landing';
+            }
+        })
+
+        .catch(function (error)
+        {
+            console.log(error);
+        });
   }
   
      return(
       <center className='HomePageBox'>
           <br></br>
-          <label for="Name"><strong>Select Just One RSO to join.</strong></label>
+          <label for="Name"><strong>Select an RSO to leave.</strong></label>
         <div className="card">
           <div className="card-header">
             <p className="title">Select RSO</p>
@@ -217,9 +218,9 @@ function JoinRSO()
         </div>
   
         <div id="registerButtonBox">
-              <input type="submit" value="Join RSO" onClick={doJoinRSO} />
+              <input type="submit" value="Leave RSO" onClick={doLeaveRSO} />
         </div>
       </center>
      );
 };
-export default JoinRSO;
+export default SelectRSO;

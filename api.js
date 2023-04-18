@@ -80,6 +80,16 @@ app.post("/api/userevents",(req,res,next) => {
   var email = req.body.email;
   var emaildomain = email.substring(email.indexOf("@"));
 
+  res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
+    res.setHeader(
+      'Access-Control-Allow-Methods',
+      'GET, POST, PATCH, DELETE, OPTIONS'
+    );
+
   console.log("user id = " + userid + ", email = " + email + ", emaildomain = " + emaildomain);
 
   var sql = "Select * from events where event_type = 'Public' or " + 
@@ -279,6 +289,16 @@ app.post("/api/event",async(req,res,next) => {
   const contact_name = req.body.contactName;
   const contact_phone = req.body.contactPhone;
   const contact_email = req.body.contactEmail;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PATCH, DELETE, OPTIONS'
+  );
   
   const baseSql = "insert into events (rso_id, event_title,subtitle,description,location_name,location_latitude,location_longitude,"
       + " event_date,event_time,event_type,category,contact_name,contact_phone,contact_email)	values "
@@ -293,7 +313,10 @@ app.post("/api/event",async(req,res,next) => {
   console.log("eventSql = " + eventSql);
 
   db.query(eventSql, (error, response) => {
-      if (error) return error;
+      if (error){
+        console.log(error);
+        return error;
+      } 
 
       console.log("event insert succeeded, event id = "+ response.insertId);
       res.json(response);
@@ -335,5 +358,215 @@ app.post("/api/selectrso",async(req,res,next) => {
       }
     })
 
+});
+
+app.post("/api/selectrsodeletion",async(req,res,next) => {
+
+  console.log("in users, process.env.db_host = "+process.env.db_host);
+
+  var user_id = req.body.user_id;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
+    res.setHeader(
+      'Access-Control-Allow-Methods',
+      'GET, POST, PATCH, DELETE, OPTIONS'
+    );
+
+  var sql = "SELECT * FROM rso INNER JOIN rso_members ON rso_members.rso_id = rso.RSO_ID"
+  + " WHERE rso_members.rso_user_id = '"+user_id+"'";
+  
+   
+  
+  db.query(sql, (error, response) => {
+      if (error) {
+        console.log(error);
+        return error;
+      }
+      if (response.length > 0) {
+          res.json(response);
+          res.status(200);
+          console.log("after query of RSOs, response length = " + response.length);
+      }
+    })
+
+});
+
+app.post("/api/leaverso",async(req,res,next) => {
+
+  console.log("in leave rso ... ");
+
+  const user_id = req.body.user_id;
+  const rso_id = req.body.rso_id;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PATCH, DELETE, OPTIONS'
+  );
+
+  const baseMembersSql = "DELETE FROM rso_members WHERE rso_members.rso_id = '"+rso_id+"' AND rso_members.rso_user_id = '"+user_id+"'";
+
+  console.log(baseMembersSql);
+  db.query(baseMembersSql, (error, response) => {
+      if (error){
+        console.log(error);
+        return error;
+      }
+      console.log("query succeeded, id = "+ response.insertId);
+      res.json(response);
+      res.status(200);
+    })
+
+});
+
+app.delete("/api/deletecomment",async(req,res,next) => {
+
+  console.log("in Delete Event Comment service  ... ");
+
+  const eventId = req.body.eventId;
+  const userId = req.body.userId;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PATCH, DELETE, OPTIONS'
+  );
+
+  const deleteSql = "delete from event_comment where event_id = " + eventId + " and user_id = '" + userId + "'";
+
+  console.log("deleteSql = " + deleteSql); 
+
+  db.query(deleteSql, (error, response) => {
+      if (error) return error;
+     
+      res.json(response);
+      console.log("successful delete for event comment: ");
+      res.status(200);
+  });
+});
+
+app.get("/api/readcomment",async(req,res,next) => {
+
+  console.log("in Get Event Comment service  ... ");
+
+  const eventId = req.body.eventId;
+  const userId = req.body.userId;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PATCH, DELETE, OPTIONS'
+  );
+
+  const selectSqlCount = "select count(*) count from event_comment where event_id = " + eventId + " and user_id = '" + userId + "'";
+
+  console.log("selectSqlCount = " + selectSqlCount); 
+
+  db.query(selectSqlCount, (error, response) => {
+      if (error) return error;
+
+      console.log("count = "+ response[0].count);
+      var commentCount = response[0].count;
+     
+
+     if (commentCount < 1) {
+      console.log("no comment found");
+      return res.status(400).json(response);
+     }
+     else {
+
+      const selectSql = "select * from event_comment where event_id = " + eventId + " and user_id = '" + userId + "'";
+
+      console.log("selectSql = " + selectSql); 
+
+      db.query(selectSql, (error, response, fields) => {
+          if (error) return error;
+
+          res.json(response);
+          console.log("successful query for event comment: ");
+          res.status(200);
+      });
+    }
+  });
+});
+
+app.post("/api/addcomment",async(req,res,next) => {
+
+  console.log("in create or update Event Comment service  ... ");
+
+  const eventId = req.body.eventId;
+  const userId = req.body.userId;
+  const comment = req.body.comment;
+  const rating = req.body.rating;
+  var commentSql = "";
+  var commentCount = 0;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PATCH, DELETE, OPTIONS'
+  );
+
+  const selectSql = "select count(*) count from event_comment where event_id = " + eventId + " and user_id = '" + userId + "'";
+
+  console.log("selectSql = " + selectSql); 
+
+  db.query(selectSql, (error, response) => {
+      if (error) return error;
+
+      console.log("count = "+ response[0].count);
+      commentCount = response[0].count;
+     
+  if (commentCount > 0) {
+      // update operation
+      console.log (" update operation");
+
+      const baseUpdateSql = "update event_comment set comment = '" + comment + "', rating = " + rating ;
+      
+     commentSql = baseUpdateSql + " where event_id = " + eventId + " and user_id = '" + userId + "'";
+
+  }
+  else {
+      // insert operation 
+      console.log("insert operation");
+
+      const baseInsertSql = "insert into event_comment (event_id, user_id, comment, rating) " + 
+  " values ( " ; 
+
+      commentSql = baseInsertSql + eventId + ",'" + userId + "','" + comment + "'," + rating + " )";
+  }
+      
+  console.log("commentSql = " + commentSql);
+
+  db.query(commentSql, (error, response) => {
+      if (error) return error;
+
+      console.log("comment add or update succeeded");
+      res.json(response);
+      res.status(200);
+  });
+
+});
+  
 });
 }

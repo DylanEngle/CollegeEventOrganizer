@@ -25,6 +25,11 @@ function CreateUniProfile(){
     window.location.href = '/createUniProfile';
 }
 
+function LeaveRSO(){
+    window.location.href = '/leaveRSO';
+}
+
+
 function RenderCorrectly(){
     var _ud = localStorage.getItem('user_data');
     var ud = JSON.parse(_ud);
@@ -73,6 +78,9 @@ function PageTitle()
 
                 <div id="SearchRecipesWords">Create a new event!</div>
                 <button type="button" id="SearchRecipesButton" class="buttons" onClick={CreateEvent}> Create Event </button>
+                
+                <div id="YourProfileWords">Leave an RSO!</div>
+                <button type="button" id="YourprofileButton" class="buttons" onClick={LeaveRSO}> Leave RSO </button>
 
                 <div id="CreateUniProfileWords">Create University Profile!</div>
                 <button type="button" id="CreateUniProfileButton" class="buttons" onClick={CreateUniProfile}> Create Uni Profile </button>

@@ -12,6 +12,8 @@ import LandingPage from './pages/LandingPage';
 import ViewEventsPage from './pages/ViewEventsPage';
 import CreateUniProfilePage from './pages/CreateUniProfilePage';
 import SelectRSOPage from './pages/SelectRSOPage';
+import ViewCommentsPage from './pages/ViewCommentsPage';
+import LeaveRSOPage from './pages/LeaveRSOPage';
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
         <Route path="/viewEvents" index element={<ViewEventsPage />} />
         <Route path="/createUniProfile" index element={<CreateUniProfilePage />} />
         <Route path="/selectRSO" index element={<SelectRSOPage />} />
+        <Route path="/comments" index element={<ViewCommentsPage />} />
+        <Route path="/leaveRSO" index element={<LeaveRSOPage />} />
       </Routes>
     </BrowserRouter>
   );
